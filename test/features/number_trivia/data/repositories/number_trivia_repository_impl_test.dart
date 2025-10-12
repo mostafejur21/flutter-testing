@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -13,16 +14,16 @@ import 'number_trivia_repository_impl_test.mocks.dart';
 @GenerateMocks([NumberTriviaRemoteDataSource, NumberTriviaLocalDataSource, NetworkInfo])
 void main() {
   late NumberTriviaRepositoryImpl repository;
-  late MockNumberTriviaRemoteDataSource mockNumberTriviaRemoteDataSourcek;
+  late MockNumberTriviaRemoteDataSource mockNumberTriviaRemoteDataSource;
   late MockNumberTriviaLocalDataSource mockNumberTriviaLocalDataSource;
   late MockNetworkInfo mockNetworkInfo;
 
   setUp(() {
-    mockNumberTriviaRemoteDataSourcek = MockNumberTriviaRemoteDataSource();
+    mockNumberTriviaRemoteDataSource = MockNumberTriviaRemoteDataSource();
     mockNumberTriviaLocalDataSource = MockNumberTriviaLocalDataSource();
     mockNetworkInfo = MockNetworkInfo();
     repository = NumberTriviaRepositoryImpl(
-      remoteDataSource: mockNumberTriviaRemoteDataSourcek,
+      remoteDataSource: mockNumberTriviaRemoteDataSource,
       localDataSource: mockNumberTriviaLocalDataSource,
       networkInfo: mockNetworkInfo,
     );
@@ -56,7 +57,7 @@ void main() {
       // arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
       when(
-        mockNumberTriviaRemoteDataSourcek.getConcreteNumberTrivia(any),
+        mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(any),
       ).thenAnswer((_) async => tNumberTriviaModel);
       // act
       repository.getConcreteNumberTrivia(tNumber);
@@ -64,9 +65,14 @@ void main() {
       verify(mockNetworkInfo.isConnected);
     });
 
-    runTestsOnline((){
+    runTestsOnline(() {
       test('should return remote data when the call to remote data source is successfull', () async {
-        
+        when(
+          mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(any),
+        ).thenAnswer((_) async => tNumberTriviaModel);
+        final result = await repository.getConcreteNumberTrivia(tNumber);
+        verify(mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
+        expect(result, equals(Right(tNumberTrivia)));
       });
     });
   });
