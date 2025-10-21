@@ -38,15 +38,6 @@ void main() {
     });
   }
 
-  void runTestsOffline(Function body) {
-    group('device is offline', () {
-      setUp(() {
-        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
-      });
-      body();
-    });
-  }
-
   group('getConcretedNumberTrivia', () {
     final tNumber = 1;
     final tNumberTriviaModel = NumberTriviaModel(text: 'test trivia', number: tNumber);
